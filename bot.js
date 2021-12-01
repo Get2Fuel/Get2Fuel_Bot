@@ -1,9 +1,9 @@
 import fs from "fs";
+import dotenv from "dotenv";
+import axios from "axios";
+import { Telegraf, Markup } from "telegraf";
 
-require("dotenv").config();
-
-const axios = require("axios");
-const { Telegraf, Markup } = require("telegraf");
+dotenv.config();
 
 if (process.env.BOT_TOKEN === undefined) {
   throw new TypeError("BOT_TOKEN must be provided!");
@@ -27,7 +27,7 @@ bot.action("delete", (ctx) => ctx.deleteMessage());
 
 bot.launch();
 // console.log("Bot service is now running");
-fs.appendFile("osservaprezzi.log", "Bot service is now running", (err) => {
+fs.appendFile("bot.log", "Bot service is now running", (err) => {
   if (err) {
     console.error(err);
     return;
