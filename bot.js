@@ -1,4 +1,7 @@
+import fs from "fs";
+
 require("dotenv").config();
+
 const axios = require("axios");
 const { Telegraf, Markup } = require("telegraf");
 
@@ -23,7 +26,13 @@ bot.on("message", (ctx) => handleMessage(ctx));
 bot.action("delete", (ctx) => ctx.deleteMessage());
 
 bot.launch();
-console.log("Bot service is now running");
+// console.log("Bot service is now running");
+fs.appendFile("osservaprezzi.log", "Bot service is now running", (err) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+});
 
 // Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
@@ -43,7 +52,13 @@ const handleMessage = (ctx) => {
         res.data.pumps.slice(0, 20).map((pump) => {
           str += `📅${pump.lastUpdate}\n📍[${pump.address}](https://www.google.com/maps/search/?api=1&query=${pump.lat},${pump.lon})\n🏷️${pump.fuels.gasoline.self}\n\n`;
         });
-        console.log(str);
+        // console.log(str);
+        fs.appendFile("osservaprezzi.log", str ?? null, (err) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+        });
         ctx.replyWithMarkdown(str, inlineKeyboard);
       });
   } else {

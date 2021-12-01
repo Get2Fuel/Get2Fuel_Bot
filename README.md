@@ -10,6 +10,13 @@ At the moment this bot just sends you the pumps around you, sorted by price base
 
 ### 2021-12-01
 
+#### Bugfixing
+
+- bugfixing
+- updated README.md
+
+### 2021-12-01
+
 #### Barely functional
 
 - minimum code required to work
