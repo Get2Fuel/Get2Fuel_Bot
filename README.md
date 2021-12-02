@@ -8,6 +8,14 @@ At the moment this bot just sends you the pumps around you, sorted by price base
 
 ## Commits history
 
+### 2021-12-02
+
+#### Date check
+
+- implemented a date check to exclude outdated prices (older than 72 hours)
+- now the response shows both gasoline and petrol prices
+- updated README.md
+
 ### 2021-12-01
 
 #### Bugfixing

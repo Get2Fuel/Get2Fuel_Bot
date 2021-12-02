@@ -2,6 +2,7 @@ import fs from "fs";
 import dotenv from "dotenv";
 import axios from "axios";
 import { Telegraf, Markup } from "telegraf";
+import dayjs from "dayjs";
 
 dotenv.config();
 
@@ -9,9 +10,10 @@ if (process.env.BOT_TOKEN === undefined) {
   throw new TypeError("BOT_TOKEN must be provided!");
 }
 
-const keyboard = Markup.keyboard([
-  Markup.button.locationRequest("🗺️ Share my location"),
-]);
+const keyboard = Markup.keyboard(
+  [Markup.button.locationRequest("🗺️ Share my location")],
+  [Markup.button.locationRequest("🆘 Help")]
+);
 
 const inlineKeyboard = Markup.inlineKeyboard([
   Markup.button.locationRequest("delete", "delete"),
@@ -45,15 +47,23 @@ const handleMessage = (ctx) => {
 
     axios
       .get(
-        `http://localhost:61234/geolocate/${latitude}/${longitude}/gasoline/any`
+        `http://${process.env.OSSERVAPREZZI_SERVER}/geolocate/${latitude}/${longitude}/gasoline/any`
       )
       .then((res) => {
         let str = "";
-        res.data.pumps.slice(0, 20).map((pump) => {
-          str += `📅${pump.lastUpdate}\n📍[${pump.address}](https://www.google.com/maps/search/?api=1&query=${pump.lat},${pump.lon})\n🏷️${pump.fuels.gasoline.self}\n\n`;
+        res.data.pumps.forEach((pump, index) => {
+          if (index <= 20) {
+            const lastUpdate = new dayjs(
+              pump.lastUpdate,
+              "YYYY-MM-DD HH:mm:ss"
+            );
+            const timeLimit = new dayjs().subtract(3, "days");
+            if (lastUpdate.isAfter(timeLimit)) {
+              str += `📅${pump.lastUpdate}\n📍[${pump.address}](https://www.google.com/maps/search/?api=1&query=${pump.lat},${pump.lon})\n🟢${pump.fuels.gasoline.self}\n⚫${pump.fuels.diesel.self}\n\n`;
+            }
+          }
         });
-        // console.log(str);
-        fs.appendFile("osservaprezzi.log", str ?? null, (err) => {
+        fs.appendFile("bot.log", str ?? null, (err) => {
           if (err) {
             console.error(err);
             return;
