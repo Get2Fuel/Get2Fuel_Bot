@@ -8,6 +8,15 @@ At the moment this bot just sends you the pumps around you, sorted by price base
 
 ## Commits history
 
+### 2021-12-03
+
+#### Framework changed
+
+- changed framework for better support
+- added menu
+- creadet messageHandler module
+- updated README.md
+
 ### 2021-12-02
 
 #### Date check
