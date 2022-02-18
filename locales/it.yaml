@@ -1,0 +1,33 @@
+start-message: "⚠️ *Attenzione*: questo bot attualmente è in fase di sviluppo ⚠️\n\nBenvenuto sul bot di Get2Fuel\\.\nInviando la tua posizione ti mostreremo un elenco di distributori convenienti nelle vicinanze\\.\n\nℹ️ *Nota*: non teniamo traccia dei dati di geolocalizzazione"
+info-message: "Inviando la tua posizione ti mostreremo un elenco di distributori convenienti nelle vicinanze\\.\n\nℹ️*Nota*: non teniamo traccia dei dati di geolocalizzazione"
+help-message: "*Elenco comandi:*\n/start: avvia il bot\n_📍 Vicino a me_ restituisce un elenco di distributori convenienti nelle vicinanze"
+
+nearby: "📍 Vicino a me"
+search: "🔍 Cerca"
+favorites: "⭐ Preferiti"
+settings: "⚙️ Impostazioni"
+help: "🆘 Aiuto"
+info: "ℹ️ Info"
+
+back: "↩️ Indietro"
+cancel: "❌ Annulla"
+
+more: "➕ Mostra altri"
+remove: "🗑️ Rimuovi"
+
+results-message: "Ecco alcuni risultati"
+search-message: "Cosa vuoi cercare?"
+settings-message: "Cosa vuoi configurare?"
+
+favorites-message: "Ecco i tuoi preferiti"
+nofavorites-message: "Sembra che tu non abbia ancora aggiunto dei preferiti\nVai alla ricerca per aggiungere ditributori"
+
+location: "🗺️ Luogo"
+name: "📝 Nome distributore"
+brand: "🏷️ Marca"
+
+fuel: "⛽ Carburante"
+tank: "🚗 Serbatoio"
+
+gasoline: "🟢 Benzina"
+petrol: "⚫ Gasolio"

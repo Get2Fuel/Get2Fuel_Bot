@@ -1,15 +1,74 @@
-import { Bot, Keyboard } from "grammy";
+import { Bot, InlineKeyboard, session } from "grammy";
+import { I18n } from "@grammyjs/i18n";
 import dotenv from "dotenv";
-import messageHandler from "./messageHandler.js";
+import pumpsFetcher from "./pumpsFetcher.js";
+import {
+  homeKeyboard,
+  searchKeyboard,
+  locationKeyboard,
+  settingsKeyboard,
+  fuelKeyboard,
+  tankKeyboard,
+  favoritesKeyboard,
+} from "./keyboards.js";
 
 dotenv.config();
 
+// setup bot
 const bot = new Bot(process.env.BOT_TOKEN);
+// setup i18n
+const i18n = new I18n({
+  defaultLanguageOnMissing: true,
+  directory: "locales",
+  useSession: true,
+});
+bot.use(i18n.middleware());
+// setup session
+const initial = () => {
+  return {
+    route: "home",
+    fuel: "gasoline",
+    tank: null,
+    favorites: [],
+    index: 0,
+    response: [],
+  };
+};
+bot.use(
+  session({
+    initial,
+  })
+);
 
+// actions
 bot.command("start", (ctx) => {
-  const text =
-    "⚠️ *Warning*: this bot is currently in development ⚠️\n\nBenvenuto sul bot di Get2Fuel\\.\nInviando la tua posizione ti mostreremo un elenco di distributori convenienti nelle vicinanze\\.\n\nℹ️ *Nota*: non teniamo traccia dei dati di geolocalizzazione";
-  ctx.reply(text, {
+  const keyboard = homeKeyboard(ctx);
+
+  ctx.reply(ctx.i18n.t("start-message"), {
+    parse_mode: "MarkdownV2",
+    reply_markup: {
+      resize_keyboard: true,
+      keyboard: keyboard.build(),
+    },
+  });
+});
+
+bot.command("search", (ctx) => {
+  ctx.reply(ctx.i18n.t("search-message"), {
+    parse_mode: "MarkdownV2",
+  });
+});
+
+bot.command("favorites", (ctx) => {
+  ctx.reply(ctx.i18n.t("favorites-message"), {
+    parse_mode: "MarkdownV2",
+  });
+});
+
+bot.command("settings", (ctx) => {
+  const keyboard = settingsKeyboard(ctx);
+
+  ctx.reply(ctx.i18n.t("settings-message"), {
     parse_mode: "MarkdownV2",
     reply_markup: {
       resize_keyboard: true,
@@ -19,9 +78,18 @@ bot.command("start", (ctx) => {
 });
 
 bot.command("info", (ctx) => {
-  const text =
-    "Inviando la tua posizione ti mostreremo un elenco di distributori convenienti nelle vicinanze\\.\n\nℹ️*Nota*: non teniamo traccia dei dati di geolocalizzazione";
-  ctx.reply(text, {
+  ctx.reply(ctx.i18n.t("info-message"), {
+    parse_mode: "MarkdownV2",
+  });
+});
+
+bot.on(":text").hears(/📝|🏷️|🗺️|🗑️|🚗.*/, async (ctx) => {
+  ctx.session.route = "home";
+
+  const keyboard = homeKeyboard(ctx);
+
+  await ctx.reply("👨‍💻 Prossimamente disponibile");
+  await ctx.reply("Scegli cosa fare:", {
     parse_mode: "MarkdownV2",
     reply_markup: {
       resize_keyboard: true,
@@ -30,10 +98,97 @@ bot.command("info", (ctx) => {
   });
 });
 
+bot.on(":text").hears(/➕.*/, async (ctx) => {
+  if (ctx.session.index < ctx.session.response.length) {
+    let index = ctx.session.index;
+    for (
+      ;
+      index < ctx.session.index + 3 && index < ctx.session.response.length;
+      index++
+    ) {
+      const pump = ctx.session.response[index];
+
+      const inlineKeyboard = new InlineKeyboard().url(
+        "🗺️ Naviga",
+        `https://www.google.com/maps/search/?api=1&query=${pump.lat},${pump.lon}`
+      );
+
+      await ctx.reply(
+        `📍${pump.address}\n${
+          ctx.session.fuel === "gasoline"
+            ? "🟢" + pump.fuels.gasoline.self
+            : "⚫" + pump.fuels.petrol.self
+        }`,
+        {
+          parse_mode: "HTML",
+          reply_markup: inlineKeyboard,
+        }
+      );
+    }
+    ctx.session.index = index;
+  } else {
+    ctx.session.index = 0;
+    ctx.session.route = "home";
+
+    const keyboard = homeKeyboard(ctx);
+
+    await ctx.reply("Risultati finiti");
+    await ctx.reply("Scegli cosa fare:", {
+      parse_mode: "MarkdownV2",
+      reply_markup: {
+        resize_keyboard: true,
+        keyboard: keyboard.build(),
+      },
+    });
+  }
+});
+
 bot.on(":location", async (ctx) => {
-  const response = await messageHandler(ctx);
-  ctx.reply(response, {
-    parse_mode: "HTML",
+  const keyboard = locationKeyboard(ctx);
+
+  const response = await pumpsFetcher(ctx);
+
+  ctx.session.response = response;
+
+  await ctx.reply(ctx.i18n.t("results-message"), {
+    parse_mode: "MarkdownV2",
+    reply_markup: {
+      resize_keyboard: true,
+      keyboard: keyboard.build(),
+    },
+  });
+
+  let index = 0;
+  for (; index < 3; index++) {
+    const pump = response[index];
+
+    const inlineKeyboard = new InlineKeyboard().url(
+      "🗺️ Naviga",
+      `https://www.google.com/maps/search/?api=1&query=${pump.lat},${pump.lon}`
+    );
+
+    await ctx.reply(
+      `📍${pump.address}\n${
+        ctx.session.fuel === "gasoline"
+          ? "🟢" + pump.fuels.gasoline.self
+          : "⚫" + pump.fuels.petrol.self
+      }`,
+      {
+        parse_mode: "HTML",
+        reply_markup: inlineKeyboard,
+      }
+    );
+  }
+  ctx.session.index = index;
+});
+
+bot.on(":text").hears(/🔍.*/, (ctx) => {
+  ctx.session.route = "search";
+
+  const keyboard = searchKeyboard(ctx);
+
+  ctx.reply(ctx.i18n.t("search-message"), {
+    parse_mode: "MarkdownV2",
     reply_markup: {
       resize_keyboard: true,
       keyboard: keyboard.build(),
@@ -41,13 +196,68 @@ bot.on(":location", async (ctx) => {
   });
 });
 
-bot.on(":text").hears("🔍 Cerca", (ctx) => {
-  ctx.reply("👨‍💻 Prossimamente disponibile");
+bot.on(":text").hears(/⭐.*/, (ctx) => {
+  const favorites = ctx.session.favorites;
+
+  if (favorites.length > 0) {
+    ctx.session.route = "favorites";
+
+    const keyboard = favoritesKeyboard(ctx);
+
+    ctx.reply(ctx.i18n.t("favorites-message"), {
+      parse_mode: "MarkdownV2",
+      reply_markup: {
+        resize_keyboard: true,
+        keyboard: keyboard.build(),
+      },
+    });
+  } else {
+    ctx.session.route = "home";
+
+    const keyboard = homeKeyboard(ctx);
+
+    ctx.reply(ctx.i18n.t("nofavorites-message"), {
+      parse_mode: "MarkdownV2",
+      reply_markup: {
+        resize_keyboard: true,
+        keyboard: keyboard.build(),
+      },
+    });
+  }
 });
 
-bot.on(":text").hears("ℹ️ Info", (ctx) => {
+bot.on(":text").hears(/⚙️.*/, (ctx) => {
+  ctx.session.route = "settings";
+
+  const keyboard = settingsKeyboard(ctx);
+
+  ctx.reply(ctx.i18n.t("settings-message"), {
+    parse_mode: "MarkdownV2",
+    reply_markup: {
+      resize_keyboard: true,
+      keyboard: keyboard.build(),
+    },
+  });
+});
+
+bot.on(":text").hears(/ℹ️.*/, (ctx) => {
+  ctx.reply(ctx.i18n.t("info-message"), {
+    parse_mode: "MarkdownV2",
+  });
+});
+
+bot.on(":text").hears(/⛽.*/, (ctx) => {
+  ctx.session.route = "fuel";
+
+  const keyboard = fuelKeyboard(ctx);
+
+  const fuel =
+    ctx.session.fuel === "gasoline"
+      ? ctx.i18n.t("gasoline")
+      : ctx.i18n.t("petrol");
+
   ctx.reply(
-    "Inviando la tua posizione ti mostreremo un elenco di distributori convenienti nelle vicinanze\\.\n\nℹ️*Nota*: non teniamo traccia dei dati di geolocalizzazione",
+    `Al momento stai cercando distributori di ${fuel}\\.\nScegli in base a cosa cercare:`,
     {
       parse_mode: "MarkdownV2",
       reply_markup: {
@@ -58,24 +268,96 @@ bot.on(":text").hears("ℹ️ Info", (ctx) => {
   );
 });
 
+bot.on(":text").hears(/🚗.*/, (ctx) => {
+  ctx.session.route = "tank";
+
+  const keyboard = tankKeyboard(ctx);
+
+  const tank = ctx.session.tank;
+
+  if (tank) {
+    ctx.reply(
+      `Il tuo serbatoio è impostato su ${tank}L\\.\nInserisci il nuovo valore:`,
+      {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          resize_keyboard: true,
+          keyboard: keyboard.build(),
+        },
+      }
+    );
+  } else {
+    ctx.reply(
+      `Le dimensioni del serbatoio non sono impostate\nInserisci il nuovo valore:`,
+      {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          resize_keyboard: true,
+          keyboard: keyboard.build(),
+        },
+      }
+    );
+  }
+});
+
+bot.on(":text").hears(/↩️|❌.*/, (ctx) => {
+  ctx.session.route = "home";
+
+  const keyboard = homeKeyboard(ctx);
+
+  ctx.reply("Perfetto, annullato", {
+    parse_mode: "MarkdownV2",
+    reply_markup: {
+      resize_keyboard: true,
+      keyboard: keyboard.build(),
+    },
+  });
+});
+
+bot.on(":text").hears(/🟢.*/, async (ctx) => {
+  ctx.session.route = "settings";
+  ctx.session.fuel = "gasoline";
+
+  const fuel = ctx.i18n.t("gasoline");
+  const keyboard = settingsKeyboard(ctx);
+
+  await ctx.reply(`Stai cercando distributori di ${fuel}`, {
+    parse_mode: "MarkdownV2",
+  });
+  ctx.reply(ctx.i18n.t("settings-message"), {
+    parse_mode: "MarkdownV2",
+    reply_markup: {
+      resize_keyboard: true,
+      keyboard: keyboard.build(),
+    },
+  });
+});
+
+bot.on(":text").hears(/⚫.*/, async (ctx) => {
+  ctx.session.route = "settings";
+  ctx.session.fuel = "petrol";
+
+  const fuel = ctx.i18n.t("petrol");
+  const keyboard = settingsKeyboard(ctx);
+
+  await ctx.reply(`Stai cercando distributori di ${fuel}`, {
+    parse_mode: "MarkdownV2",
+  });
+  ctx.reply(ctx.i18n.t("settings-message"), {
+    parse_mode: "MarkdownV2",
+    reply_markup: {
+      resize_keyboard: true,
+      keyboard: keyboard.build(),
+    },
+  });
+});
+
+// fallback action
 bot.on("message", (ctx) => {
-  ctx.reply(
-    "*Elenco comandi:*\n/start: avvia il bot\n_📍 Vicino a me_ restituisce un elenco di distributori convenienti nelle vicinanze",
-    {
-      parse_mode: "MarkdownV2",
-      reply_markup: {
-        resize_keyboard: true,
-        keyboard: keyboard.build(),
-      },
-    }
-  );
+  ctx.reply(ctx.i18n.t("help-message"), {
+    parse_mode: "MarkdownV2",
+  });
 });
 
+// start the bot
 bot.start();
-
-const keyboard = new Keyboard()
-  .requestLocation("📍 Vicino a me")
-  .text("🔍 Cerca")
-  .row()
-  .text("🆘 Aiuto")
-  .text("ℹ️ Info");

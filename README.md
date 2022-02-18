@@ -8,6 +8,18 @@ At the moment this bot just sends you the pumps around you, sorted by price base
 
 ## Commits history
 
+### 2022-02-19
+
+#### Nicer look
+
+- added i18n support
+- added menu entries
+- added module for keyboards
+- added routing base
+- messageHandler module renamed to pumpsFetcher (makes more sense)
+- minor changes
+- updated README.md
+
 ### 2021-12-03
 
 #### Framework changed
