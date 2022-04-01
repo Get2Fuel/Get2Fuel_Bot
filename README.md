@@ -1,4 +1,4 @@
-# Get2Fuel_Bot
+# get2fuel_bot
 
 ## Description
 
@@ -7,6 +7,14 @@ This is a service for a Telegram Bot that consumes [Osservaprezzi-Carburanti](ht
 At the moment this bot just sends you the pumps around you, sorted by price based on your location.
 
 ## Commits history
+
+### 2022-04-01
+
+#### Back online
+
+- implemented new API
+- minor changes
+- updated README.md
 
 ### 2022-02-19
 

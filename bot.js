@@ -11,6 +11,11 @@ import {
   tankKeyboard,
   favoritesKeyboard,
 } from "./keyboards.js";
+import dayjs from "dayjs";
+import calendar from "dayjs/plugin/calendar.js";
+import "dayjs/locale/it.js";
+dayjs.extend(calendar);
+dayjs.locale("it");
 
 dotenv.config();
 
@@ -110,11 +115,13 @@ bot.on(":text").hears(/➕.*/, async (ctx) => {
 
       const inlineKeyboard = new InlineKeyboard().url(
         "🗺️ Naviga",
-        `https://www.google.com/maps/search/?api=1&query=${pump.lat},${pump.lon}`
+        `https://www.google.com/maps/search/?api=1&query=${pump.coordinates.latitude},${pump.coordinates.longitude}`
       );
 
       await ctx.reply(
-        `📍${pump.address}\n${
+        `📍${pump.address} - ${pump.town}\n🕐${dayjs(
+          dayjs(pump.lastUpdate).add(1, "hour")
+        ).calendar()}\n${
           ctx.session.fuel === "gasoline"
             ? "🟢" + pump.fuels.gasoline.self
             : "⚫" + pump.fuels.petrol.self
@@ -164,11 +171,13 @@ bot.on(":location", async (ctx) => {
 
     const inlineKeyboard = new InlineKeyboard().url(
       "🗺️ Naviga",
-      `https://www.google.com/maps/search/?api=1&query=${pump.lat},${pump.lon}`
+      `https://www.google.com/maps/search/?api=1&query=${pump.coordinates.latitude},${pump.coordinates.longitude}`
     );
 
     await ctx.reply(
-      `📍${pump.address}\n${
+      `📍${pump.address} - ${pump.town}\n🕐${dayjs(
+        dayjs(pump.lastUpdate).add(1, "hour")
+      ).calendar()}\n${
         ctx.session.fuel === "gasoline"
           ? "🟢" + pump.fuels.gasoline.self
           : "⚫" + pump.fuels.petrol.self
