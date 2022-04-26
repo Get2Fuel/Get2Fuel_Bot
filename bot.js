@@ -28,7 +28,7 @@ const bot = new Bot(process.env.BOT_TOKEN);
 // setup i18n
 const i18n = new I18n({
   defaultLanguageOnMissing: true,
-  directory: "locales",
+  directory: __dirname + "/locales",
   useSession: true,
 });
 bot.use(i18n.middleware());
