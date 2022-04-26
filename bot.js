@@ -3,7 +3,7 @@ import { I18n } from "@grammyjs/i18n";
 import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
-import pumpsFetcher from "./pumpsFetcher.js";
+import pumpsFetcher from "./modules/pumpsFetcher.js";
 import {
   homeKeyboard,
   searchKeyboard,
@@ -12,10 +12,11 @@ import {
   fuelKeyboard,
   tankKeyboard,
   favoritesKeyboard,
-} from "./keyboards.js";
+} from "./modules/keyboards.js";
 import dayjs from "dayjs";
 import calendar from "dayjs/plugin/calendar.js";
 import "dayjs/locale/it.js";
+import responseBuilder from "./modules/responseBuilder.js";
 dayjs.extend(calendar);
 dayjs.locale("it");
 
@@ -122,19 +123,10 @@ bot.on(":text").hears(/➕.*/, async (ctx) => {
         `https://www.google.com/maps/search/?api=1&query=${pump.coordinates.latitude},${pump.coordinates.longitude}`
       );
 
-      await ctx.reply(
-        `📍${pump.address} - ${pump.town}\n🕐${dayjs(
-          dayjs(pump.lastUpdate).add(1, "hour")
-        ).calendar()}\n${
-          ctx.session.fuel === "gasoline"
-            ? "🟢" + pump.fuels.gasoline.self
-            : "⚫" + pump.fuels.petrol.self
-        }`,
-        {
-          parse_mode: "HTML",
-          reply_markup: inlineKeyboard,
-        }
-      );
+      await ctx.reply(responseBuilder({ ctx, pump }), {
+        parse_mode: "HTML",
+        reply_markup: inlineKeyboard,
+      });
     }
     ctx.session.index = index;
   } else {
@@ -178,19 +170,10 @@ bot.on(":location", async (ctx) => {
       `https://www.google.com/maps/search/?api=1&query=${pump.coordinates.latitude},${pump.coordinates.longitude}`
     );
 
-    await ctx.reply(
-      `📍${pump.address} - ${pump.town}\n🕐${dayjs(
-        dayjs(pump.lastUpdate).add(1, "hour")
-      ).calendar()}\n${
-        ctx.session.fuel === "gasoline"
-          ? "🟢" + pump.fuels.gasoline.self
-          : "⚫" + pump.fuels.petrol.self
-      }`,
-      {
-        parse_mode: "HTML",
-        reply_markup: inlineKeyboard,
-      }
-    );
+    await ctx.reply(responseBuilder({ ctx, pump }), {
+      parse_mode: "HTML",
+      reply_markup: inlineKeyboard,
+    });
   }
   ctx.session.index = index;
 });
