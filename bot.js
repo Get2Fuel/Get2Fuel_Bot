@@ -1,6 +1,8 @@
 import { Bot, InlineKeyboard, session } from "grammy";
 import { I18n } from "@grammyjs/i18n";
+import path from "path";
 import dotenv from "dotenv";
+import { fileURLToPath } from "url";
 import pumpsFetcher from "./pumpsFetcher.js";
 import {
   homeKeyboard,
@@ -17,7 +19,9 @@ import "dayjs/locale/it.js";
 dayjs.extend(calendar);
 dayjs.locale("it");
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: __dirname + "/.env" });
 
 // setup bot
 const bot = new Bot(process.env.BOT_TOKEN);
