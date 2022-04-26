@@ -13,7 +13,7 @@ const pumpsFetcher = async (ctx) => {
   // );
 
   const res = await axios.get(
-    `http://${process.env.LOCALHOST}/api/v1/pumps/query?latitude=${latitude}&longitude=${longitude}`
+    `http://${process.env.OSSERVAPREZZI_SERVER}/api/legacy/pumps/query?latitude=${latitude}&longitude=${longitude}`
   );
 
   res.data.forEach((pump, index) => {
