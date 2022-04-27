@@ -8,7 +8,16 @@ At the moment this bot just sends you the pumps around you, sorted by price base
 
 ## Commits history
 
-### 2022-04-01
+### 2022-04-27
+
+#### Switched to MVC
+
+- implemented MVC pattern
+- changed all messages to HTML render instead of MD
+- added preset favorites for testing purposes
+- updated README.md
+
+### 2022-04-26
 
 #### New interface
 
