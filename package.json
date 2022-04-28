@@ -17,11 +17,14 @@
   },
   "homepage": "https://github.com/Get2Fuel/Get2Fuel_Bot#readme",
   "dependencies": {
+    "@grammyjs/fluent": "^1.0.3",
     "@grammyjs/i18n": "^0.5.1",
     "@grammyjs/menu": "^1.0.4",
+    "@moebius/fluent": "^1.1.0",
     "axios": "^0.24.0",
     "dayjs": "^1.10.7",
     "dotenv": "^10.0.0",
+    "easy-table": "^1.2.0",
     "grammy": "^1.4.3",
     "telegraf": "^4.4.2"
   },

@@ -1,1 +1,51 @@
-start-message: "⚠️ *Warning*: this bot is currently in development ⚠️\n\nBenvenuto sul bot di Get2Fuel\\.\nInviando la tua posizione ti mostreremo un elenco di distributori convenienti nelle vicinanze\\.\n\nℹ️ *Nota*: non teniamo traccia dei dati di geolocalizzazione"
+start-message: "⚠️ <b>Warning</b>: this bot is currently in development ⚠️\n\nBenvenuto sul bot di Get2Fuel.\nInviando la tua posizione ti mostreremo un elenco di distributori convenienti nelle vicinanze.\n\nℹ️ <b>Nota</b>: non teniamo traccia dei dati di geolocalizzazione"
+info-message: "Inviando la tua posizione ti mostreremo un elenco di distributori convenienti nelle vicinanze.\n\nℹ️<b>Nota</>: non teniamo traccia dei dati di geolocalizzazione"
+help-message: "<b>Elenco comandi:</b>\n/start: avvia il bot\n<i>📍 Vicino a me</i> restituisce un elenco di distributori convenienti nelle vicinanze"
+
+nearby: "📍 Vicino a me"
+search: "🔍 Cerca"
+favorites: "⭐ Preferiti"
+settings: "⚙️ Impostazioni"
+help: "🆘 Aiuto"
+info: "ℹ️ Info"
+
+back: "↩️ Indietro"
+cancel: "❌ Annulla"
+
+more: "➕ Mostra altri"
+remove: "🗑️ Rimuovi"
+
+results-message: "Ecco alcuni risultati"
+search-message: "Cosa vuoi cercare?"
+settings-message: "Cosa vuoi configurare?"
+
+favorites-message: "Ecco i tuoi preferiti"
+nofavorites-message: "Sembra che tu non abbia ancora aggiunto dei preferiti\nVai alla ricerca per aggiungere ditributori"
+
+location: "🗺️ Luogo"
+name: "📝 Nome distributore"
+brand: "🏷️ Marca"
+
+fuel: "⛽ Carburante"
+tank: "🚗 Serbatoio"
+
+gasoline: "🟢 Benzina"
+petrol: "⚫ Gasolio"
+
+tableFuel: "Carburante"
+tableSelf: "Self"
+tableServed: "Servito"
+tablegasoline: "Benzina"
+tablepetrol: "Gasolio"
+tablemethane: "Metano"
+tablelpg: "GPL"
+tablehundredOctane: "100 ottani"
+tableeniBlueSuper: "Eni Blue Super"
+tableeniBlueDiesel: "Eni Blue Diesel"
+tablealpinePetrol: "Gasolio alpino"
+tableessoSupremeDiesel: "Esso Supreme Diesel"
+tableessoGasolioPremium: "Esso Gasolio Premium"
+tableq8HiQDiesel: "Q8 HiQ Diesel"
+tableq8HiQPerformPlus: "Q8 HiQ Perform Plus"
+tablelGnc: "L-GNC"
+tablegnl: "GNL"

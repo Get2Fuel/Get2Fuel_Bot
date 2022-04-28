@@ -2,11 +2,28 @@
 
 ## Description
 
-This is a service for a Telegram Bot that consumes [Osservaprezzi-Carburanti](https://carburanti.mise.gov.it/OssPrezziSearch/) APIs through [OsservaPrezzi-Connector](https://github.com/Get2Fuel/OsservaPrezzi-Connector)
+This is a service for a Telegram Bot that consumes [Osservaprezzi-Carburanti](https://carburanti.mise.gov.it/OssPrezziSearch/) APIs through [OsservaPrezzi-Connector](https://github.com/Get2Fuel/osservaprezzi-connector)
 
 At the moment this bot just sends you the pumps around you, sorted by price based on your location.
 
 ## Commits history
+
+### 2022-04-27
+
+#### Switched to MVC
+
+- implemented MVC pattern
+- changed all messages to HTML render instead of MD
+- added preset favorites for testing purposes
+- updated README.md
+
+### 2022-04-26
+
+#### New interface
+
+- new interface for responses
+- minor changes
+- updated README.md
 
 ### 2022-04-01
 
