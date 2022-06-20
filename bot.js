@@ -8,6 +8,7 @@ import pumps from "./controllers/pumps.js";
 import settings from "./controllers/settings.js";
 import setFuel from "./controllers/setFuel.js";
 import buildReply from "./modules/buildReply.js";
+import { pumpMenu } from "./modules/menu.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +38,7 @@ const initial = () => {
     ],
     index: 0,
     response: [],
+    currentPump: { index: 0 },
   };
 };
 bot.use(
@@ -44,6 +46,9 @@ bot.use(
     initial,
   })
 );
+
+// setup menu
+bot.use(pumpMenu);
 
 // setup controllers
 bot.use(actions);

@@ -8,6 +8,14 @@ At the moment this bot just sends you the pumps around you, sorted by price base
 
 ## Commits history
 
+### 2022-06-20
+
+#### Minor changes
+
+- minor changes
+- refactored menu section
+- updated README.md
+
 ### 2022-04-27
 
 #### Switched to MVC

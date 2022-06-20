@@ -14,7 +14,7 @@ export const start = (ctx) => {
   });
 };
 
-export const favorites = (ctx) => {
+export const favorites = async (ctx) => {
   const favorites = ctx.session.favorites;
 
   if (favorites.length > 0) {
@@ -25,11 +25,14 @@ export const favorites = (ctx) => {
       messageId: "favorites-message",
     });
 
-    favorites.forEach(async (favorite) => {
-      const pump = await fetchPumpById(favorite.id);
+    ctx.session.currentPump.index = 0;
 
-      buildResponse({ ctx, pump });
-    });
+    ctx.session.response = [];
+    for (let index = 0; index < ctx.session.favorites.length; index++) {
+      ctx.session.response.push(await fetchPumpById(favorites[index].id));
+    }
+
+    buildResponse({ ctx });
   } else {
     ctx.session.route = "home";
 

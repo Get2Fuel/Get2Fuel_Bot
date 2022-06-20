@@ -5,6 +5,7 @@ import calendar from "dayjs/plugin/calendar.js";
 import "dayjs/locale/it.js";
 import { InlineKeyboard } from "grammy";
 import buildReply from "./buildReply.js";
+import { pumpMenu } from "./menu.js";
 
 dayjs.extend(calendar);
 dayjs.locale("it");
@@ -67,19 +68,16 @@ export const fetchPumpById = async (id) => {
 export const fetchPumpByPosition = async (ctx) => {};
 
 export const buildResponse = async ({ ctx, pump }) => {
-  const inlineKeyboard = new InlineKeyboard().url(
-    "🗺️ Naviga",
-    `https://www.google.com/maps/search/?api=1&query=${pump.coordinates.latitude},${pump.coordinates.longitude}`
-  );
+  ctx.session.currentPump.id = ctx.session.response[0].pumpId;
 
   await buildReply({
     ctx,
-    message: buildResponseMessage({ ctx, pump }),
-    inlineKeyboard,
+    message: buildResponseMessage({ ctx, pump: ctx.session.response[0] }),
+    inlineKeyboard: pumpMenu,
   });
 };
 
-const buildResponseMessage = ({ ctx, pump }) => {
+export const buildResponseMessage = ({ ctx, pump }) => {
   const table = new EasyTable();
   const fuels = Object.keys(pump.fuels);
   fuels.forEach((fuel) => {
@@ -89,7 +87,9 @@ const buildResponseMessage = ({ ctx, pump }) => {
     table.newRow();
   });
 
-  const responseMessage = `📍${pump.address}\n🕐${dayjs(
+  const responseMessage = `<a href="https://www.google.com/maps/search/?api=1&query=${
+    pump.coordinates.latitude
+  },${pump.coordinates.longitude}">📍${pump.address}</a>\n🕐${dayjs(
     dayjs(pump.lastUpdate).add(1, "hour")
   ).calendar()}\n<pre>${table.toString()}</pre>`;
 

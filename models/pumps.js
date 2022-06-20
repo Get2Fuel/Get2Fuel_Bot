@@ -15,17 +15,13 @@ export const getPumpsByGeolocation = async (ctx) => {
   await buildReply({
     ctx,
     messageId: "results-message",
-    keyboard: locationKeyboard(ctx),
+    keyboard: homeKeyboard(ctx),
   });
 
-  if (response.length !== 0) {
-    let index = 0;
-    for (; index < 3; index++) {
-      const pump = response[index];
+  if (response.length > 0) {
+    ctx.session.currentPump.index = 0;
 
-      await buildResponse({ ctx, pump });
-    }
-    ctx.session.index = index;
+    await buildResponse({ ctx });
   } else {
     ctx.session.route = "home";
 
